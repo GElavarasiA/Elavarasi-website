@@ -4,13 +4,21 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                echo 'Building image...'
+                script {
+                    docker.build("elavarasi-website:latest")
+                }
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                echo 'Running container...'
+                script {
+                    sh '''
+                    docker stop elavarasi-site || true
+                    docker rm elavarasi-site || true
+                    docker run -d -p 8081:80 --name elavarasi-site elavarasi-website:latest
+                    '''
+                }
             }
         }
     }
